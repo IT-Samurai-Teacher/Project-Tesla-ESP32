@@ -12,8 +12,8 @@
 #define CAMERA_MODEL_AI_THINKER
 
 // REPLACE WITH YOUR NETWORK CREDENTIALS
-const char* ssid = "Tincy Acorns Childcare";
-const char* password = "Tiny@Acorns$2023";
+const char* ssid = "YOUR SSID NAME";
+const char* password = "YOUR SSID PASSWORD";
 
 // IT Samurai Teacher's Configuration
 #if defined(CAMERA_MODEL_WROVER_KIT)
