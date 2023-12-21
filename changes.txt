@@ -1,0 +1,8 @@
+Changes made to the original ESP32 Camera Surveillance Car software:
+
+- Added custom CSS styles for button shapes and colors.
+- Modified HTML structure to include a border around the camera view.
+- Included links to the IT Samurai Teacher YouTube channel and website in the web server's index page.
+- Implemented additional HTTP handlers for new camera functionalities.
+- Enhanced user interface elements for better interaction and display.
+- Optimized camera streaming and image capture routines for improved performance.

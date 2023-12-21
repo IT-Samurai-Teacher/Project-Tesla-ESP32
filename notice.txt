@@ -1,0 +1,10 @@
+This software is a modified version of the ESP32 Camera Surveillance Car project, originally developed by Espressif Systems (Shanghai) PTE LTD.
+
+Modifications were made by [IT Samurai Teacher Youtube Channel] to enhance functionality and user experience. This modified version is distributed under the Apache License, Version 2.0.
+
+The original software is subject to the terms of the Apache License, Version 2.0. A copy of the license can be found at:
+http://www.apache.org/licenses/LICENSE-2.0
+
+Acknowledgments:
+- Espressif Systems for the original ESP32 Camera Surveillance Car software.
+- [Any other acknowledgments if you've used third-party resources or libraries]
