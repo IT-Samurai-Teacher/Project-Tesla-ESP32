@@ -3,21 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DALL-E 3 Image Generator</title>
+    <title>IT Samurai Teacher - DALL-E 3 Image Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
             background: #f5f5f5;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .container {
+        .main-container {
             background: white;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .channel-info {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f5f5f5;
+        }
+        .channel-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: block;
+        }
+        .channel-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .channel-link {
+            color: #3498db;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .channel-link:hover {
+            text-decoration: underline;
+        }
+        .video-container {
+            margin-bottom: 20px;
+        }
+        .video-container iframe {
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 5px;
         }
         h1 {
             color: #2c3e50;
@@ -107,10 +154,19 @@
             margin-bottom: 5px;
             display: block;
         }
+        @media (max-width: 900px) {
+            body {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+            .sidebar {
+                order: 2;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="main-container">
         <h1>DALL-E 3 Image Generator</h1>
         
         <div class="api-key-notice">
@@ -150,18 +206,36 @@
         <div id="result"></div>
     </div>
 
+    <div class="sidebar">
+        <div class="channel-info">
+            <img src="/api/placeholder/100/100" alt="IT Samurai Teacher" class="channel-logo" />
+            <div class="channel-name">IT Samurai Teacher</div>
+            <a href="https://www.youtube.com/@itsamuraiteacher" target="_blank" class="channel-link">Subscribe to my Channel</a>
+        </div>
+        
+        <div class="video-container">
+            <iframe width="260" height="145" src="https://www.youtube.com/embed/c7eYRUeQz4M" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="video-container">
+            <iframe width="260" height="145" src="https://www.youtube.com/embed/Jg4gjYzbYsg" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="video-container">
+            <iframe width="260" height="145" src="https://www.youtube.com/embed/VFlc5LJYbf0" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+
     <script>
+        // Set initial prompt
+        window.onload = function() {
+            const textarea = document.getElementById('prompt');
+            textarea.value = "Young Indian couple walking down the street with swimming suites";
+            updateCharCount(textarea);
+        }
+
         function updateCharCount(textarea) {
             const count = textarea.value.length;
             const countDisplay = textarea.parentElement.querySelector('.char-count');
             countDisplay.textContent = `${count} characters`;
-        }
-
-        // Set initial prompt if provided
-        window.onload = function() {
-            const textarea = document.getElementById('prompt');
-            textarea.value = "Two beautiful Indian women in their 20s posing together at dusk, warm candlelight illumination, plumeria flowers in hair, floral sundresses, natural genuine smiles, soft bokeh background with tropical leaves, professional portrait photography, warm golden hour lighting, intimate atmosphere, shallow depth of field, Canon EOS R5, 85mm f/1.4 lens, cinematic color grading";
-            updateCharCount(textarea);
         }
 
         async function generateImage() {
