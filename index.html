@@ -1,64 +1,148 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AI-Powered Text Analyzer</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 20px;
-    }
-    textarea {
-      width: 100%;
-      height: 150px;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #result {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .generated-image {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .api-key-notice {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeeba;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>AI Image Generator</h1>
+        
+        <div class="api-key-notice">
+            Please enter your OpenAI API key to generate images. Your key is processed client-side and not stored.
+        </div>
 
-  <h1>AI-Powered Text Analyzer</h1>
-  <p>Enter some text and click "Analyze" to see the magic!</p>
+        <div class="input-group">
+            <input type="password" id="apiKey" placeholder="Enter your OpenAI API key" />
+        </div>
 
-  <textarea id="textInput" placeholder="Enter your text here..."></textarea>
-  <button onclick="analyzeText()">Analyze</button>
+        <div class="input-group">
+            <input type="text" id="prompt" placeholder="Enter your image description" />
+        </div>
 
-  <div id="results">
-    <h2>Results:</h2>
-    <p id="sentiment"></p>
-    <p id="summary"></p>
-  </div>
+        <button onclick="generateImage()">Generate Image</button>
 
-  <script>
-    function analyzeText() {
-      const text = document.getElementById("textInput").value;
+        <div class="loading">
+            <p>Generating your image... Please wait...</p>
+        </div>
 
-      // Simulate AI processing (replace with actual API calls)
-      const sentiment = getFakeSentiment(text); // Replace with API call
-      const summary = getFakeSummary(text);   // Replace with API call
+        <div id="result"></div>
+    </div>
 
-      document.getElementById("sentiment").innerText = `Sentiment: ${sentiment}`;
-      document.getElementById("summary").innerText = `Summary: ${summary}`;
-    }
+    <script>
+        async function generateImage() {
+            const apiKey = document.getElementById('apiKey').value;
+            const prompt = document.getElementById('prompt').value;
+            const loadingDiv = document.querySelector('.loading');
+            const resultDiv = document.getElementById('result');
 
-    // Replace these functions with actual API calls to AI services
-    function getFakeSentiment(text) {
-      const randomSentiment = ["Positive", "Negative", "Neutral"];
-      return randomSentiment[Math.floor(Math.random() * randomSentiment.length)];
-    }
+            if (!apiKey || !prompt) {
+                alert('Please enter both API key and prompt');
+                return;
+            }
 
-    function getFakeSummary(text) {
-      return "This is a fake summary of the text.";
-    }
-  </script>
+            loadingDiv.style.display = 'block';
+            resultDiv.innerHTML = '';
 
+            try {
+                const response = await fetch('https://api.openai.com/v1/images/generations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        n: 1,
+                        size: "512x512"
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+
+                const imageUrl = data.data[0].url;
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.className = 'generated-image';
+                resultDiv.appendChild(img);
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red">Error: ${error.message}</p>`;
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
