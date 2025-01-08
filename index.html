@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Image Generator</title>
+    <title>DALL-E 3 Image Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         body {
@@ -27,12 +27,13 @@
         .input-group {
             margin-bottom: 20px;
         }
-        input[type="text"] {
+        input[type="text"], input[type="password"], select {
             width: 100%;
             padding: 10px;
             border: 2px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+            margin-bottom: 10px;
         }
         button {
             background: #3498db;
@@ -70,11 +71,17 @@
             margin-bottom: 20px;
             border: 1px solid #ffeeba;
         }
+        .options-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>AI Image Generator</h1>
+        <h1>DALL-E 3 Image Generator</h1>
         
         <div class="api-key-notice">
             Please enter your OpenAI API key to generate images. Your key is processed client-side and not stored.
@@ -88,10 +95,23 @@
             <input type="text" id="prompt" placeholder="Enter your image description" />
         </div>
 
+        <div class="options-group">
+            <select id="size">
+                <option value="1024x1024">1024x1024 (Square)</option>
+                <option value="1792x1024">1792x1024 (Landscape)</option>
+                <option value="1024x1792">1024x1792 (Portrait)</option>
+            </select>
+            
+            <select id="quality">
+                <option value="standard">Standard Quality</option>
+                <option value="hd">HD Quality</option>
+            </select>
+        </div>
+
         <button onclick="generateImage()">Generate Image</button>
 
         <div class="loading">
-            <p>Generating your image... Please wait...</p>
+            <p>Generating your image with DALL-E 3... Please wait...</p>
         </div>
 
         <div id="result"></div>
@@ -101,6 +121,8 @@
         async function generateImage() {
             const apiKey = document.getElementById('apiKey').value;
             const prompt = document.getElementById('prompt').value;
+            const size = document.getElementById('size').value;
+            const quality = document.getElementById('quality').value;
             const loadingDiv = document.querySelector('.loading');
             const resultDiv = document.getElementById('result');
 
@@ -120,9 +142,11 @@
                         'Authorization': `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
+                        model: "dall-e-3",
                         prompt: prompt,
                         n: 1,
-                        size: "512x512"
+                        size: size,
+                        quality: quality
                     })
                 });
 
