@@ -27,12 +27,36 @@
         .input-group {
             margin-bottom: 20px;
         }
-        input[type="text"], input[type="password"], select {
+        input[type="password"], select {
             width: 100%;
             padding: 10px;
             border: 2px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+            margin-bottom: 10px;
+        }
+        textarea#prompt {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            line-height: 1.5;
+            resize: vertical;
+            font-family: inherit;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+        textarea#prompt:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .char-count {
+            font-size: 14px;
+            color: #666;
+            text-align: right;
+            margin-top: -8px;
             margin-bottom: 10px;
         }
         button {
@@ -77,6 +101,12 @@
             gap: 10px;
             margin-bottom: 20px;
         }
+        .label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -88,11 +118,14 @@
         </div>
 
         <div class="input-group">
+            <span class="label">API Key:</span>
             <input type="password" id="apiKey" placeholder="Enter your OpenAI API key" />
         </div>
 
         <div class="input-group">
-            <input type="text" id="prompt" placeholder="Enter your image description" />
+            <span class="label">Image Prompt:</span>
+            <textarea id="prompt" placeholder="Describe the image you want to generate..." oninput="updateCharCount(this)"></textarea>
+            <div class="char-count">0 characters</div>
         </div>
 
         <div class="options-group">
@@ -118,6 +151,19 @@
     </div>
 
     <script>
+        function updateCharCount(textarea) {
+            const count = textarea.value.length;
+            const countDisplay = textarea.parentElement.querySelector('.char-count');
+            countDisplay.textContent = `${count} characters`;
+        }
+
+        // Set initial prompt if provided
+        window.onload = function() {
+            const textarea = document.getElementById('prompt');
+            textarea.value = "Two beautiful Indian women in their 20s posing together at dusk, warm candlelight illumination, plumeria flowers in hair, floral sundresses, natural genuine smiles, soft bokeh background with tropical leaves, professional portrait photography, warm golden hour lighting, intimate atmosphere, shallow depth of field, Canon EOS R5, 85mm f/1.4 lens, cinematic color grading";
+            updateCharCount(textarea);
+        }
+
         async function generateImage() {
             const apiKey = document.getElementById('apiKey').value;
             const prompt = document.getElementById('prompt').value;
