@@ -1,25 +1,64 @@
-<link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css">
-<script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
-<df-messenger
-  location="us-central1"
-  project-id="phrasal-verve-447105-t0"
-  agent-id="a66923a1-b0af-4903-a40a-fed46e47ac65"
-  language-code="en"
-  max-query-length="-1">
-  <df-messenger-chat-bubble
-   chat-title="CustomerSupportBot">
-  </df-messenger-chat-bubble>
-</df-messenger>
-<style>
-  df-messenger {
-    z-index: 999;
-    position: fixed;
-    --df-messenger-font-color: #000;
-    --df-messenger-font-family: Google Sans;
-    --df-messenger-chat-background: #f3f6fc;
-    --df-messenger-message-user-background: #d3e3fd;
-    --df-messenger-message-bot-background: #fff;
-    bottom: 16px;
-    right: 16px;
-  }
-</style>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI-Powered Text Analyzer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>AI-Powered Text Analyzer</h1>
+  <p>Enter some text and click "Analyze" to see the magic!</p>
+
+  <textarea id="textInput" placeholder="Enter your text here..."></textarea>
+  <button onclick="analyzeText()">Analyze</button>
+
+  <div id="results">
+    <h2>Results:</h2>
+    <p id="sentiment"></p>
+    <p id="summary"></p>
+  </div>
+
+  <script>
+    function analyzeText() {
+      const text = document.getElementById("textInput").value;
+
+      // Simulate AI processing (replace with actual API calls)
+      const sentiment = getFakeSentiment(text); // Replace with API call
+      const summary = getFakeSummary(text);   // Replace with API call
+
+      document.getElementById("sentiment").innerText = `Sentiment: ${sentiment}`;
+      document.getElementById("summary").innerText = `Summary: ${summary}`;
+    }
+
+    // Replace these functions with actual API calls to AI services
+    function getFakeSentiment(text) {
+      const randomSentiment = ["Positive", "Negative", "Neutral"];
+      return randomSentiment[Math.floor(Math.random() * randomSentiment.length)];
+    }
+
+    function getFakeSummary(text) {
+      return "This is a fake summary of the text.";
+    }
+  </script>
+
+</body>
+</html>
