@@ -190,6 +190,11 @@
                 <option value="1792x1024">1792x1024 (Landscape)</option>
                 <option value="1024x1792">1024x1792 (Portrait)</option>
             </select>
+            
+            <select id="quality">
+                <option value="standard">Standard Quality</option>
+                <option value="hd">High Quality</option>
+            </select>
         </div>
 
         <button onclick="generateImage()">Generate Image</button>
@@ -237,6 +242,7 @@
             const apiKey = document.getElementById('apiKey').value;
             const prompt = document.getElementById('prompt').value;
             const size = document.getElementById('size').value;
+            const quality = document.getElementById('quality').value;
             const loadingDiv = document.querySelector('.loading');
             const resultDiv = document.getElementById('result');
 
@@ -257,8 +263,8 @@
                     },
                     body: JSON.stringify({
                         model: "dall-e-3",
-                        prompt: `${prompt} | Hyper-realistic, vivid details, vibrant colors, cinematic composition.`,
-                        n: 3,
+                        prompt: `${prompt} | ${quality} quality, hyper-realistic, vibrant colors, cinematic composition.`,
+                        n: 1,
                         size: size
                     })
                 });
@@ -269,19 +275,11 @@
                     throw new Error(data.error.message);
                 }
 
-                resultDiv.innerHTML = ""; // Clear previous results
-
-                data.data.forEach((imgData, index) => {
-                    const img = document.createElement('img');
-                    img.src = imgData.url;
-                    img.className = 'generated-image';
-                    resultDiv.appendChild(img);
-
-                    const caption = document.createElement('p');
-                    caption.textContent = `Image ${index + 1}`;
-                    caption.style.textAlign = 'center';
-                    resultDiv.appendChild(caption);
-                });
+                const imageUrl = data.data[0].url;
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.className = 'generated-image';
+                resultDiv.appendChild(img);
             } catch (error) {
                 resultDiv.innerHTML = `<p style="color: red">Error: ${error.message}</p>`;
             } finally {
