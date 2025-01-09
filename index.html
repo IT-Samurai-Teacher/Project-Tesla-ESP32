@@ -142,9 +142,11 @@
     <div class="profile-section">
         <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-pic" id="profile-picture">
         <h2 id="profile-name">Your Name</h2>
-        <div class="support-links">
-            <a href="#" class="support-btn coffee" id="coffee-link">Buy me a coffee ☕</a>
-            <a href="#" class="support-btn paypal" id="paypal-link">Support via PayPal 💖</a>
+        <div class="support-section">
+            <h3 class="support-title">Support My Work</h3>
+            <div class="support-grid" id="support-buttons">
+                <!-- Support buttons will be added here dynamically -->
+            </div>
         </div>
     </div>
 
@@ -173,9 +175,23 @@
         </div>
 
         <div class="edit-field">
-            <label>Support Links (Optional):</label>
-            <input type="url" id="coffee-url" placeholder="Buy Me a Coffee URL">
-            <input type="url" id="paypal-url" placeholder="PayPal.me URL">
+            <label>Support Links:</label>
+            <select id="platform-select" onchange="showPlatformInput()">
+                <option value="">Add Support Platform</option>
+                <option value="coffee">Buy Me a Coffee</option>
+                <option value="paypal">PayPal</option>
+                <option value="patreon">Patreon</option>
+                <option value="ko-fi">Ko-fi</option>
+                <option value="github">GitHub Sponsor</option>
+            </select>
+            
+            <div id="platform-inputs">
+                <!-- Platform input fields will be added here -->
+            </div>
+            
+            <div id="added-platforms" class="profile-list">
+                <!-- Added platforms will be listed here -->
+            </div>
         </div>
 
         <div class="edit-field">
@@ -350,33 +366,135 @@
             `;
         }
 
+        // Platform configurations
+        const platforms = {
+            coffee: {
+                name: 'Buy Me a Coffee',
+                icon: '☕',
+                placeholder: 'https://buymeacoffee.com/yourname'
+            },
+            paypal: {
+                name: 'PayPal',
+                icon: '💰',
+                placeholder: 'https://paypal.me/yourname'
+            },
+            patreon: {
+                name: 'Patreon',
+                icon: '🎨',
+                placeholder: 'https://patreon.com/yourname'
+            },
+            'ko-fi': {
+                name: 'Ko-fi',
+                icon: '🎯',
+                placeholder: 'https://ko-fi.com/yourname'
+            },
+            github: {
+                name: 'GitHub Sponsor',
+                icon: '⭐',
+                placeholder: 'https://github.com/sponsors/yourname'
+            }
+        };
+
+        let addedPlatforms = [];
+
+        function showPlatformInput() {
+            const select = document.getElementById('platform-select');
+            const platform = select.value;
+            
+            if (!platform) return;
+            
+            if (addedPlatforms.find(p => p.type === platform)) {
+                alert('This platform is already added!');
+                select.value = '';
+                return;
+            }
+
+            const inputsContainer = document.getElementById('platform-inputs');
+            const inputDiv = document.createElement('div');
+            inputDiv.className = 'platform-input active';
+            inputDiv.innerHTML = `
+                <input type="url" 
+                       id="${platform}-url" 
+                       placeholder="${platforms[platform].placeholder}"
+                       class="edit-field">
+                <button class="save-btn" 
+                        style="margin-top: 10px;" 
+                        onclick="addPlatform('${platform}')">
+                    Add ${platforms[platform].name}
+                </button>
+            `;
+            
+            inputsContainer.innerHTML = '';
+            inputsContainer.appendChild(inputDiv);
+        }
+
+        function addPlatform(platform) {
+            const url = document.getElementById(`${platform}-url`).value;
+            
+            if (!url) {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            addedPlatforms.push({
+                type: platform,
+                url: url
+            });
+
+            document.getElementById('platform-select').value = '';
+            document.getElementById('platform-inputs').innerHTML = '';
+            
+            updatePlatformsList();
+            updateSupportButtons();
+        }
+
+        function removePlatform(index) {
+            addedPlatforms.splice(index, 1);
+            updatePlatformsList();
+            updateSupportButtons();
+        }
+
+        function updatePlatformsList() {
+            const container = document.getElementById('added-platforms');
+            container.innerHTML = '<label>Added Support Platforms:</label>';
+            
+            addedPlatforms.forEach((platform, index) => {
+                const item = document.createElement('div');
+                item.className = 'profile-item';
+                item.innerHTML = `
+                    <span>${platforms[platform.type].name}</span>
+                    <button class="remove-btn" onclick="removePlatform(${index})">Remove</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateSupportButtons() {
+            const container = document.getElementById('support-buttons');
+            container.innerHTML = '';
+            
+            addedPlatforms.forEach(platform => {
+                const button = document.createElement('a');
+                button.href = platform.url;
+                button.target = '_blank';
+                button.className = `support-btn ${platform.type}`;
+                button.innerHTML = `
+                    <span class="support-icon">${platforms[platform.type].icon}</span>
+                    ${platforms[platform.type].name}
+                `;
+                container.appendChild(button);
+            });
+        }
+
         function saveChanges() {
+            // Previous code remains
             // Update profile section
             const name = document.getElementById('name').value;
             const profilePicUrl = document.getElementById('profile-pic-url').value;
-            const coffeeUrl = document.getElementById('coffee-url').value;
-            const paypalUrl = document.getElementById('paypal-url').value;
 
             document.getElementById('profile-name').textContent = name;
             if (profilePicUrl) {
                 document.getElementById('profile-picture').src = profilePicUrl;
-            }
-
-            const coffeeLink = document.getElementById('coffee-link');
-            const paypalLink = document.getElementById('paypal-link');
-            
-            if (coffeeUrl) {
-                coffeeLink.href = coffeeUrl;
-                coffeeLink.style.display = 'inline-block';
-            } else {
-                coffeeLink.style.display = 'none';
-            }
-
-            if (paypalUrl) {
-                paypalLink.href = paypalUrl;
-                paypalLink.style.display = 'inline-block';
-            } else {
-                paypalLink.style.display = 'none';
             }
 
             // Update title
