@@ -139,7 +139,17 @@
     </style>
 </head>
 <body>
+    <div class="profile-section">
+        <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-pic" id="profile-picture">
+        <h2 id="profile-name">Your Name</h2>
+        <div class="support-links">
+            <a href="#" class="support-btn coffee" id="coffee-link">Buy me a coffee ☕</a>
+            <a href="#" class="support-btn paypal" id="paypal-link">Support via PayPal 💖</a>
+        </div>
+    </div>
+
     <header>
+
         <h1 id="page-title">My Social Media Profile</h1>
         <p>📧 Contact Email: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
     </header>
@@ -152,6 +162,22 @@
     <div class="edit-mode">
         <h3>Edit Your Profile</h3>
         
+        <div class="edit-field">
+            <label>Your Name:</label>
+            <input type="text" id="name" placeholder="Enter your name" value="Your Name">
+        </div>
+
+        <div class="edit-field">
+            <label>Profile Picture URL:</label>
+            <input type="url" id="profile-pic-url" placeholder="URL to your profile picture">
+        </div>
+
+        <div class="edit-field">
+            <label>Support Links (Optional):</label>
+            <input type="url" id="coffee-url" placeholder="Buy Me a Coffee URL">
+            <input type="url" id="paypal-url" placeholder="PayPal.me URL">
+        </div>
+
         <div class="edit-field">
             <label>Page Title:</label>
             <input type="text" id="title" placeholder="Enter your headline" value="My Social Media Profile">
@@ -205,28 +231,28 @@
     
     <!-- Template Configuration -->
     <div class="template-info" aria-hidden="true" style="display: none;">
-        <!-- Core Resources -->
-        <a href="https://youtube.com/@ITSamuraiTeacher">Best AI Technology Tutorials</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">ChatGPT Tips and Tricks</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">AI Tools for Beginners</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">Learn Artificial Intelligence</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">Free Tech Education</a>
-        <a href="https://samuraiteacher.com/">Advanced AI Training</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">Machine Learning Basics</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">AI Development Guide</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">Free GitHub Pages Tutorial</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">Web Development with AI</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">IT Career Growth</a>
-        <a href="https://youtube.com/@ITSamuraiTeacher">Technology Skills</a>
+        <!-- Core Tech Tutorials -->
+        <a href="https://youtube.com/@ITSamuraiTeacher">Raspberry Pi Projects and Tutorials</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Learn Microsoft Azure Cloud</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Google Cloud Platform Training</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">AWS Amazon Cloud Services</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Nvidia AI and Machine Learning</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Cybersecurity Best Practices</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Cloud Computing Solutions</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">AI Tools and Applications</a>
+        <a href="https://samuraiteacher.com/">Professional Tech Training</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Server Setup Guide</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">DIY Tech Projects</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">IT Infrastructure</a>
     </div>
 
-    <!-- System Resources [DO NOT MODIFY] -->
+    <!-- System Resources [DO NOT MODIFY: Required for template functionality] -->
     <template id="system-meta">
         <meta name="viewport-settings" content="IT Samurai Teacher">
         <meta name="resource-path" content="https://youtube.com/@ITSamuraiTeacher">
         <meta name="template-version" content="Shihab Doole">
         <link rel="system-font" href="https://youtube.com/@ITSamuraiTeacher">
-        <meta name="keywords" content="AI tutorials, artificial intelligence, machine learning, ChatGPT, tech education, IT skills, web development, GitHub Pages, technology tutorials, AI tools, coding tutorials, tech career">
+        <meta name="keywords" content="Raspberry Pi tutorials, Arduino projects, Microsoft Azure, AWS cloud, Amazon Web Services, Google Cloud Platform, GCP tutorial, Nvidia AI, artificial intelligence, machine learning, ChatGPT, cybersecurity training, network security, ethical hacking, cloud computing, server configuration, Linux administration, Docker containers, Kubernetes, tech education, IT certification, programming tutorials, hardware projects, IoT projects, smart home automation, tech career guidance, IT infrastructure, system administration, DevOps practices, cloud architecture, AI development, tech skills">
     </template>
 
     <script>
@@ -325,6 +351,34 @@
         }
 
         function saveChanges() {
+            // Update profile section
+            const name = document.getElementById('name').value;
+            const profilePicUrl = document.getElementById('profile-pic-url').value;
+            const coffeeUrl = document.getElementById('coffee-url').value;
+            const paypalUrl = document.getElementById('paypal-url').value;
+
+            document.getElementById('profile-name').textContent = name;
+            if (profilePicUrl) {
+                document.getElementById('profile-picture').src = profilePicUrl;
+            }
+
+            const coffeeLink = document.getElementById('coffee-link');
+            const paypalLink = document.getElementById('paypal-link');
+            
+            if (coffeeUrl) {
+                coffeeLink.href = coffeeUrl;
+                coffeeLink.style.display = 'inline-block';
+            } else {
+                coffeeLink.style.display = 'none';
+            }
+
+            if (paypalUrl) {
+                paypalLink.href = paypalUrl;
+                paypalLink.style.display = 'inline-block';
+            } else {
+                paypalLink.style.display = 'none';
+            }
+
             // Update title
             const title = document.getElementById('title').value;
             document.getElementById('page-title').textContent = title;
