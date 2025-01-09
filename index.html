@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Social Media Profile Editor</title>
+    <title>Social Media Profile</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,6 +17,7 @@
             background-color: #0077b5;
             color: white;
             padding: 20px 0;
+            margin-bottom: 30px;
         }
         header h1 {
             margin: 0;
@@ -25,16 +26,39 @@
         .container {
             padding: 20px;
             margin-right: 320px;
+            min-height: 500px;
+        }
+        .profile-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: block;
+            object-fit: cover;
         }
         .social-card {
             background: white;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: inline-block;
             width: 300px;
             margin: 15px;
             padding: 20px;
             text-align: center;
+        }
+        .social-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 15px;
         }
         .edit-mode {
             position: fixed;
@@ -49,63 +73,102 @@
         }
         .edit-field {
             margin: 15px 0;
-            padding: 10px;
+            padding: 15px;
             background: #f9f9f9;
             border-radius: 5px;
         }
         .edit-field label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
+            color: #333;
         }
-        .edit-field input, .edit-field select {
+        .edit-field input, 
+        .edit-field select {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             margin: 5px 0;
             border: 1px solid #ddd;
             border-radius: 4px;
+            box-sizing: border-box;
         }
-        .btn {
+        .button {
             background: #4CAF50;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 5px;
-            width: calc(100% - 10px);
+            width: 100%;
+            margin: 10px 0;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
         }
-        .btn:hover {
+        .button:hover {
             background: #45a049;
         }
-        #mainSaveBtn {
+        .button.blue {
             background: #007bff;
-            margin-top: 20px;
         }
-        #mainSaveBtn:hover {
+        .button.blue:hover {
             background: #0056b3;
+        }
+        .added-platforms {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        .platform-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .platform-item button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .attribution {
+            padding: 20px;
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            font-size: 0.9em;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1 id="titleDisplay">My Social Media Profile</h1>
+        <h1 id="page-title">My Social Media Profile</h1>
     </header>
 
-    <div class="container" id="previewArea">
-        <!-- Preview content will appear here -->
+    <div class="container" id="content-area">
+        <div class="profile-section" id="profile-section">
+            <!-- Profile content will be added here -->
+        </div>
+        <div id="platforms-section">
+            <!-- Platform cards will be added here -->
+        </div>
     </div>
 
     <div class="edit-mode">
-        <h3>Edit Your Profile</h3>
+        <h2>Edit Your Profile</h2>
         
         <div class="edit-field">
             <label>Title:</label>
-            <input type="text" id="titleInput" value="My Social Media Profile">
+            <input type="text" id="titleInput" placeholder="Enter page title" value="My Social Media Profile">
         </div>
 
         <div class="edit-field">
-            <label>Name:</label>
+            <label>Your Name:</label>
             <input type="text" id="nameInput" placeholder="Enter your name">
         </div>
 
@@ -120,24 +183,36 @@
                 <option value="">Select Platform</option>
                 <option value="youtube">YouTube</option>
                 <option value="facebook">Facebook</option>
-                <option value="twitter">Twitter</option>
+                <option value="twitter">Twitter/X</option>
                 <option value="instagram">Instagram</option>
                 <option value="linkedin">LinkedIn</option>
                 <option value="tiktok">TikTok</option>
+                <option value="github">GitHub</option>
             </select>
             <input type="url" id="platformUrl" placeholder="Enter profile URL" style="margin-top: 10px;">
-            <button onclick="addPlatform()" class="btn">Add Platform</button>
+            <button onclick="addPlatform()" class="button">Add Platform</button>
         </div>
 
-        <div id="platformsList" class="edit-field">
+        <div id="addedPlatforms" class="added-platforms">
+            <h3>Added Platforms:</h3>
             <!-- Added platforms will appear here -->
         </div>
 
-        <button id="mainSaveBtn" onclick="saveChanges()" class="btn">Save All Changes</button>
+        <button onclick="saveChanges()" class="button blue">Save All Changes</button>
+        <button onclick="downloadHTML()" class="button">Download HTML</button>
     </div>
 
     <script>
         let platforms = [];
+        const platformIcons = {
+            youtube: '📺',
+            facebook: '📱',
+            twitter: '🐦',
+            instagram: '📸',
+            linkedin: '💼',
+            tiktok: '🎵',
+            github: '💻'
+        };
 
         function addPlatform() {
             const select = document.getElementById('platformSelect');
@@ -150,24 +225,28 @@
 
             platforms.push({
                 type: select.value,
-                url: url
+                url: url,
+                icon: platformIcons[select.value]
             });
 
             updatePlatformsList();
             select.value = '';
             document.getElementById('platformUrl').value = '';
+            
+            // Auto-save changes
+            saveChanges();
         }
 
         function updatePlatformsList() {
-            const list = document.getElementById('platformsList');
-            list.innerHTML = '<h4>Added Platforms:</h4>';
+            const list = document.getElementById('addedPlatforms');
+            list.innerHTML = '<h3>Added Platforms:</h3>';
             
             platforms.forEach((platform, index) => {
                 const div = document.createElement('div');
-                div.style.marginBottom = '10px';
+                div.className = 'platform-item';
                 div.innerHTML = `
-                    ${platform.type}: ${platform.url}
-                    <button onclick="removePlatform(${index})" style="margin-left: 10px">Remove</button>
+                    <span>${platform.icon} ${platform.type}</span>
+                    <button onclick="removePlatform(${index})">Remove</button>
                 `;
                 list.appendChild(div);
             });
@@ -176,42 +255,70 @@
         function removePlatform(index) {
             platforms.splice(index, 1);
             updatePlatformsList();
+            saveChanges();
         }
 
         function saveChanges() {
             // Update title
             const title = document.getElementById('titleInput').value;
-            document.getElementById('titleDisplay').textContent = title;
+            document.getElementById('page-title').textContent = title;
             document.title = title;
 
-            // Update preview area
-            const previewArea = document.getElementById('previewArea');
-            previewArea.innerHTML = '';
-            
-            // Add profile info
+            // Update profile section
             const name = document.getElementById('nameInput').value;
             const picUrl = document.getElementById('profilePicInput').value;
             
-            if (name || picUrl) {
-                const profileCard = document.createElement('div');
-                profileCard.className = 'social-card';
-                profileCard.innerHTML = `
-                    ${picUrl ? `<img src="${picUrl}" alt="Profile" style="width: 150px; height: 150px; border-radius: 50%;">` : ''}
-                    ${name ? `<h2>${name}</h2>` : ''}
-                `;
-                previewArea.appendChild(profileCard);
-            }
+            const profileSection = document.getElementById('profile-section');
+            profileSection.innerHTML = `
+                ${picUrl ? `<img src="${picUrl}" alt="Profile" class="profile-pic">` : ''}
+                ${name ? `<h2>${name}</h2>` : ''}
+            `;
 
-            // Add platform cards
+            // Update platforms
+            const platformsSection = document.getElementById('platforms-section');
+            platformsSection.innerHTML = '';
+            
             platforms.forEach(platform => {
                 const card = document.createElement('div');
                 card.className = 'social-card';
                 card.innerHTML = `
+                    <div style="font-size: 3em;">${platform.icon}</div>
                     <h3>${platform.type}</h3>
-                    <a href="${platform.url}" target="_blank" class="btn">Visit Profile</a>
+                    <a href="${platform.url}" target="_blank" class="button">Visit Profile</a>
                 `;
-                previewArea.appendChild(card);
+                platformsSection.appendChild(card);
             });
+        }
+
+        function downloadHTML() {
+            // Create a copy of the current document
+            const finalHTML = document.documentElement.cloneNode(true);
+            
+            // Remove edit panel
+            const editPanel = finalHTML.querySelector('.edit-mode');
+            if (editPanel) editPanel.remove();
+            
+            // Reset container margin
+            const container = finalHTML.querySelector('.container');
+            if (container) container.style.marginRight = '0';
+            
+            // Add attribution
+            const attribution = document.createElement('div');
+            attribution.className = 'attribution';
+            attribution.innerHTML = `
+                <p>Template created by <strong>IT Samurai Teacher</strong></p>
+                <p><small>© 2025 IT Samurai Teacher (Shihab Doole). Free to use with attribution.</small></p>
+            `;
+            finalHTML.querySelector('body').appendChild(attribution);
+            
+            // Create and trigger download
+            const blob = new Blob([finalHTML.outerHTML], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my-social-profile.html';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         // Initial save
