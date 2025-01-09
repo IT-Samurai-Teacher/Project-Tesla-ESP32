@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Social Media Profile Editor</title>
     <style>
+        /* Previous styles remain same */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -24,7 +25,7 @@
         }
         .container {
             padding: 20px;
-            margin-right: 320px; /* Space for edit panel */
+            margin-right: 320px;
         }
         .social-card {
             background: white;
@@ -41,6 +42,7 @@
             height: 100px;
             border-radius: 50%;
             margin-bottom: 15px;
+            object-fit: cover;
         }
         .social-card h2 {
             margin: 10px 0;
@@ -56,9 +58,6 @@
             text-decoration: none;
             font-size: 1em;
             margin-top: 10px;
-        }
-        .social-card a:hover {
-            background-color: #005582;
         }
         .edit-mode {
             position: fixed;
@@ -81,9 +80,8 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            color: #333;
         }
-        .edit-field input {
+        .edit-field input, .edit-field select {
             width: 100%;
             padding: 8px;
             margin: 5px 0;
@@ -103,23 +101,40 @@
         .save-btn:hover {
             background: #45a049;
         }
+        .remove-btn {
+            background: #ff4444;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .profile-list {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        .profile-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 3px;
+        }
         .attribution {
             background: #f8f8f8;
             padding: 20px;
             margin-top: 30px;
             border-top: 1px solid #ddd;
         }
-        .creator-badge {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #ff0000;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            margin: 10px;
-        }
-        .creator-badge:hover {
-            background: #cc0000;
+        .default-img {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -147,40 +162,33 @@
             <input type="email" id="email" placeholder="your.email@example.com">
         </div>
 
+        <!-- Add Social Media Profile -->
         <div class="edit-field">
-            <label>YouTube Channel:</label>
-            <input type="url" id="youtube-url" placeholder="Channel URL">
-            <input type="url" id="youtube-img" placeholder="Profile Image URL">
+            <label>Add Social Media Profile:</label>
+            <select id="platform-select">
+                <option value="">Select Platform</option>
+                <option value="youtube">YouTube</option>
+                <option value="facebook">Facebook</option>
+                <option value="twitter">Twitter/X</option>
+                <option value="instagram">Instagram</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="tiktok">TikTok</option>
+                <option value="github">GitHub</option>
+                <option value="custom">Custom Platform</option>
+            </select>
+            <div id="custom-platform-name" style="display: none;">
+                <input type="text" id="custom-name" placeholder="Enter platform name">
+            </div>
+            <input type="url" id="profile-url" placeholder="Profile URL" style="margin-top: 10px;">
+            <input type="url" id="profile-img" placeholder="Profile Image URL (optional)">
+            <div class="default-img">Leave image URL empty for default platform icon</div>
+            <button class="save-btn" onclick="addProfile()" style="background: #007bff;">Add Profile</button>
         </div>
 
-        <div class="edit-field">
-            <label>Facebook:</label>
-            <input type="url" id="facebook-url" placeholder="Profile URL">
-            <input type="url" id="facebook-img" placeholder="Profile Image URL">
-        </div>
-
-        <div class="edit-field">
-            <label>Twitter/X:</label>
-            <input type="url" id="twitter-url" placeholder="Profile URL">
-            <input type="url" id="twitter-img" placeholder="Profile Image URL">
-        </div>
-
-        <div class="edit-field">
-            <label>Instagram:</label>
-            <input type="url" id="instagram-url" placeholder="Profile URL">
-            <input type="url" id="instagram-img" placeholder="Profile Image URL">
-        </div>
-
-        <div class="edit-field">
-            <label>LinkedIn:</label>
-            <input type="url" id="linkedin-url" placeholder="Profile URL">
-            <input type="url" id="linkedin-img" placeholder="Profile Image URL">
-        </div>
-
-        <div class="edit-field">
-            <label>TikTok:</label>
-            <input type="url" id="tiktok-url" placeholder="Profile URL">
-            <input type="url" id="tiktok-img" placeholder="Profile Image URL">
+        <!-- Added Profiles List -->
+        <div class="profile-list" id="added-profiles">
+            <label>Added Profiles:</label>
+            <!-- Profiles will be listed here -->
         </div>
 
         <button class="save-btn" onclick="saveChanges()">Save Changes</button>
@@ -196,13 +204,95 @@
     </div>
 
     <script>
-        // Function to create a social card
+        // Store profiles in memory
+        let profiles = [];
+
+        // Default platform icons
+        const defaultIcons = {
+            youtube: 'https://www.youtube.com/favicon.ico',
+            facebook: 'https://www.facebook.com/favicon.ico',
+            twitter: 'https://twitter.com/favicon.ico',
+            instagram: 'https://www.instagram.com/favicon.ico',
+            linkedin: 'https://www.linkedin.com/favicon.ico',
+            tiktok: 'https://www.tiktok.com/favicon.ico',
+            github: 'https://github.com/favicon.ico'
+        };
+
+        // Show/hide custom platform input
+        document.getElementById('platform-select').addEventListener('change', function() {
+            const customInput = document.getElementById('custom-platform-name');
+            customInput.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        function addProfile() {
+            const platformSelect = document.getElementById('platform-select');
+            let platform = platformSelect.value;
+            const customName = document.getElementById('custom-name').value;
+            const url = document.getElementById('profile-url').value;
+            let img = document.getElementById('profile-img').value;
+
+            if (!platform || !url) {
+                alert('Please select a platform and enter the profile URL');
+                return;
+            }
+
+            if (platform === 'custom' && !customName) {
+                alert('Please enter a name for your custom platform');
+                return;
+            }
+
+            // Use platform name or custom name
+            const platformName = platform === 'custom' ? customName : platform;
+
+            // Use default icon if no image URL provided
+            if (!img && defaultIcons[platform]) {
+                img = defaultIcons[platform];
+            }
+
+            // Add to profiles array
+            profiles.push({
+                platform: platformName,
+                url: url,
+                img: img || 'https://via.placeholder.com/100'
+            });
+
+            // Clear inputs
+            platformSelect.value = '';
+            document.getElementById('custom-name').value = '';
+            document.getElementById('profile-url').value = '';
+            document.getElementById('profile-img').value = '';
+            document.getElementById('custom-platform-name').style.display = 'none';
+
+            updateProfilesList();
+            saveChanges();
+        }
+
+        function updateProfilesList() {
+            const container = document.getElementById('added-profiles');
+            container.innerHTML = '<label>Added Profiles:</label>';
+
+            profiles.forEach((profile, index) => {
+                const item = document.createElement('div');
+                item.className = 'profile-item';
+                item.innerHTML = `
+                    <span>${profile.platform}</span>
+                    <button class="remove-btn" onclick="removeProfile(${index})">Remove</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function removeProfile(index) {
+            profiles.splice(index, 1);
+            updateProfilesList();
+            saveChanges();
+        }
+
         function createSocialCard(platform, url, imgUrl) {
-            if (!url || !imgUrl) return ''; // Don't create empty cards
             return `
                 <div class="social-card">
-                    <img src="${imgUrl}" alt="${platform} Logo">
-                    <h2>${platform}</h2>
+                    <img src="${imgUrl}" alt="${platform} Logo" onerror="this.src='https://via.placeholder.com/100'">
+                    <h2>${platform.charAt(0).toUpperCase() + platform.slice(1)}</h2>
                     <a href="${url}" target="_blank">Visit Profile</a>
                 </div>
             `;
@@ -220,32 +310,19 @@
             emailLink.href = `mailto:${email}`;
             emailLink.textContent = email;
 
-            // Clear existing cards
+            // Update social cards
             const container = document.getElementById('social-cards-container');
             container.innerHTML = '';
-
-            // Add new cards for each filled out social media platform
-            const platforms = ['youtube', 'facebook', 'twitter', 'instagram', 'linkedin', 'tiktok'];
-            platforms.forEach(platform => {
-                const url = document.getElementById(`${platform}-url`).value;
-                const img = document.getElementById(`${platform}-img`).value;
-                if (url && img) {
-                    container.innerHTML += createSocialCard(
-                        platform.charAt(0).toUpperCase() + platform.slice(1),
-                        url,
-                        img
-                    );
-                }
+            profiles.forEach(profile => {
+                container.innerHTML += createSocialCard(profile.platform, profile.url, profile.img);
             });
         }
 
         function downloadHTML() {
-            // Create final HTML without edit panel
             const finalHTML = document.documentElement.cloneNode(true);
             const editPanel = finalHTML.querySelector('.edit-mode');
             if(editPanel) editPanel.remove();
             
-            // Clean up the container margins
             const container = finalHTML.querySelector('.container');
             container.style.marginRight = '0';
             
