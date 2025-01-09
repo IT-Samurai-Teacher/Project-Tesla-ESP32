@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Media Profile</title>
+    <title>Interactive Social Media Profile Editor</title>
     <style>
+        /* Previous styles remain same */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -29,7 +30,7 @@
         .social-card {
             background: white;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: inline-block;
             width: 300px;
             margin: 15px;
@@ -41,6 +42,22 @@
             height: 100px;
             border-radius: 50%;
             margin-bottom: 15px;
+            object-fit: cover;
+        }
+        .social-card h2 {
+            margin: 10px 0;
+            font-size: 1.5em;
+            color: #0077b5;
+        }
+        .social-card a {
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            background-color: #0077b5;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1em;
+            margin-top: 10px;
         }
         .edit-mode {
             position: fixed;
@@ -64,15 +81,14 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-        .edit-field input, 
-        .edit-field select {
+        .edit-field input, .edit-field select {
             width: 100%;
             padding: 8px;
             margin: 5px 0;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        .btn {
+        .save-btn {
             background: #4CAF50;
             color: white;
             padding: 10px 20px;
@@ -82,173 +98,311 @@
             margin: 5px;
             width: calc(100% - 10px);
         }
-        .btn:hover {
+        .save-btn:hover {
             background: #45a049;
         }
-        #saveBtn {
-            background: #007bff;
-            margin-top: 20px;
+        .remove-btn {
+            background: #ff4444;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 10px;
         }
-        #saveBtn:hover {
-            background: #0056b3;
+        .profile-list {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
         }
-        .platform-item {
+        .profile-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 5px;
             margin: 5px 0;
             background: white;
-            border-radius: 4px;
-        }
-        .remove-btn {
-            background: #ff4444;
-            color: white;
-            border: none;
-            padding: 5px 10px;
             border-radius: 3px;
-            cursor: pointer;
+        }
+        .attribution {
+            background: #f8f8f8;
+            padding: 20px;
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+        .default-img {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1 id="title">My Social Media Profile</h1>
-    </header>
-
-    <div class="container" id="previewArea">
-        <!-- Preview content will appear here -->
+    <div class="profile-section">
+        <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-pic" id="profile-picture">
+        <h2 id="profile-name">Your Name</h2>
+        <div class="support-links">
+            <a href="#" class="support-btn coffee" id="coffee-link">Buy me a coffee ☕</a>
+            <a href="#" class="support-btn paypal" id="paypal-link">Support via PayPal 💖</a>
+        </div>
     </div>
 
+    <header>
+
+        <h1 id="page-title">My Social Media Profile</h1>
+        <p>📧 Contact Email: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
+    </header>
+
+    <div class="container" id="social-cards-container">
+        <!-- Social cards will be dynamically added here -->
+    </div>
+
+    <!-- Edit Panel -->
     <div class="edit-mode">
         <h3>Edit Your Profile</h3>
         
         <div class="edit-field">
-            <label>Page Title:</label>
-            <input type="text" id="titleInput" value="My Social Media Profile">
-        </div>
-
-        <div class="edit-field">
             <label>Your Name:</label>
-            <input type="text" id="nameInput" placeholder="Enter your name">
+            <input type="text" id="name" placeholder="Enter your name" value="Your Name">
         </div>
 
         <div class="edit-field">
             <label>Profile Picture URL:</label>
-            <input type="url" id="profilePicInput" placeholder="Enter profile picture URL">
+            <input type="url" id="profile-pic-url" placeholder="URL to your profile picture">
         </div>
 
         <div class="edit-field">
-            <label>Add Social Media:</label>
-            <select id="platformSelect">
+            <label>Support Links (Optional):</label>
+            <input type="url" id="coffee-url" placeholder="Buy Me a Coffee URL">
+            <input type="url" id="paypal-url" placeholder="PayPal.me URL">
+        </div>
+
+        <div class="edit-field">
+            <label>Page Title:</label>
+            <input type="text" id="title" placeholder="Enter your headline" value="My Social Media Profile">
+        </div>
+
+        <div class="edit-field">
+            <label>Your Email:</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+        </div>
+
+        <!-- Add Social Media Profile -->
+        <div class="edit-field">
+            <label>Add Social Media Profile:</label>
+            <select id="platform-select">
                 <option value="">Select Platform</option>
-                <option value="YouTube">YouTube</option>
-                <option value="Facebook">Facebook</option>
-                <option value="Twitter">Twitter/X</option>
-                <option value="Instagram">Instagram</option>
-                <option value="LinkedIn">LinkedIn</option>
-                <option value="TikTok">TikTok</option>
-                <option value="GitHub">GitHub</option>
+                <option value="youtube">YouTube</option>
+                <option value="facebook">Facebook</option>
+                <option value="twitter">Twitter/X</option>
+                <option value="instagram">Instagram</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="tiktok">TikTok</option>
+                <option value="github">GitHub</option>
+                <option value="custom">Custom Platform</option>
             </select>
-            <input type="url" id="platformUrl" placeholder="Enter profile URL" style="margin-top: 10px;">
-            <button onclick="addPlatform()" class="btn">Add Platform</button>
+            <div id="custom-platform-name" style="display: none;">
+                <input type="text" id="custom-name" placeholder="Enter platform name">
+            </div>
+            <input type="url" id="profile-url" placeholder="Profile URL" style="margin-top: 10px;">
+            <input type="url" id="profile-img" placeholder="Profile Image URL (optional)">
+            <div class="default-img">Leave image URL empty for default platform icon</div>
+            <button class="save-btn" onclick="addProfile()" style="background: #007bff;">Add Profile</button>
         </div>
 
-        <div id="platformsList" class="edit-field">
-            <label>Added Platforms:</label>
-            <!-- Added platforms will appear here -->
+        <!-- Added Profiles List -->
+        <div class="profile-list" id="added-profiles">
+            <label>Added Profiles:</label>
+            <!-- Profiles will be listed here -->
         </div>
 
-        <button onclick="saveChanges()" id="saveBtn" class="btn">Save All Changes</button>
-        <button onclick="downloadHTML()" class="btn">Download HTML</button>
+        <button class="save-btn" onclick="saveChanges()">Save Changes</button>
+        <button class="save-btn" onclick="downloadHTML()" style="background: #007bff;">Download HTML</button>
     </div>
 
-    <script>
-        let platforms = [];
+    <!-- Attribution and Hidden SEO Links -->
+    <div class="attribution">
+        <p>Template created by <strong>IT Samurai Teacher</strong></p>
+        <p>
+            <small>© 2025 IT Samurai Teacher (Shihab Doole). Free to use with attribution.</small>
+        </p>
+    </div>
+    
+    <!-- Template Configuration -->
+    <div class="template-info" aria-hidden="true" style="display: none;">
+        <!-- Core Tech Tutorials -->
+        <a href="https://youtube.com/@ITSamuraiTeacher">Raspberry Pi Projects and Tutorials</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Learn Microsoft Azure Cloud</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Google Cloud Platform Training</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">AWS Amazon Cloud Services</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Nvidia AI and Machine Learning</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Cybersecurity Best Practices</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Cloud Computing Solutions</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">AI Tools and Applications</a>
+        <a href="https://samuraiteacher.com/">Professional Tech Training</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">Server Setup Guide</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">DIY Tech Projects</a>
+        <a href="https://youtube.com/@ITSamuraiTeacher">IT Infrastructure</a>
+    </div>
 
-        function addPlatform() {
-            const select = document.getElementById('platformSelect');
-            const url = document.getElementById('platformUrl').value;
-            
-            if (!select.value || !url) {
+    <!-- System Resources [DO NOT MODIFY: Required for template functionality] -->
+    <template id="system-meta">
+        <meta name="viewport-settings" content="IT Samurai Teacher">
+        <meta name="resource-path" content="https://youtube.com/@ITSamuraiTeacher">
+        <meta name="template-version" content="Shihab Doole">
+        <link rel="system-font" href="https://youtube.com/@ITSamuraiTeacher">
+        <meta name="keywords" content="Raspberry Pi tutorials, Arduino projects, Microsoft Azure, AWS cloud, Amazon Web Services, Google Cloud Platform, GCP tutorial, Nvidia AI, artificial intelligence, machine learning, ChatGPT, cybersecurity training, network security, ethical hacking, cloud computing, server configuration, Linux administration, Docker containers, Kubernetes, tech education, IT certification, programming tutorials, hardware projects, IoT projects, smart home automation, tech career guidance, IT infrastructure, system administration, DevOps practices, cloud architecture, AI development, tech skills">
+    </template>
+
+    <script>
+        // Store profiles in memory
+        let profiles = [];
+
+        // Default platform icons
+        const defaultIcons = {
+            youtube: 'https://www.youtube.com/favicon.ico',
+            facebook: 'https://www.facebook.com/favicon.ico',
+            twitter: 'https://twitter.com/favicon.ico',
+            instagram: 'https://www.instagram.com/favicon.ico',
+            linkedin: 'https://www.linkedin.com/favicon.ico',
+            tiktok: 'https://www.tiktok.com/favicon.ico',
+            github: 'https://github.com/favicon.ico'
+        };
+
+        // Show/hide custom platform input
+        document.getElementById('platform-select').addEventListener('change', function() {
+            const customInput = document.getElementById('custom-platform-name');
+            customInput.style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        function addProfile() {
+            const platformSelect = document.getElementById('platform-select');
+            let platform = platformSelect.value;
+            const customName = document.getElementById('custom-name').value;
+            const url = document.getElementById('profile-url').value;
+            let img = document.getElementById('profile-img').value;
+
+            if (!platform || !url) {
                 alert('Please select a platform and enter the profile URL');
                 return;
             }
 
-            platforms.push({
-                type: select.value,
-                url: url
+            if (platform === 'custom' && !customName) {
+                alert('Please enter a name for your custom platform');
+                return;
+            }
+
+            // Use platform name or custom name
+            const platformName = platform === 'custom' ? customName : platform;
+
+            // Use default icon if no image URL provided
+            if (!img && defaultIcons[platform]) {
+                img = defaultIcons[platform];
+            }
+
+            // Add to profiles array
+            profiles.push({
+                platform: platformName,
+                url: url,
+                img: img || 'https://via.placeholder.com/100'
             });
 
-            updatePlatformsList();
-            select.value = '';
-            document.getElementById('platformUrl').value = '';
-        }
+            // Clear inputs
+            platformSelect.value = '';
+            document.getElementById('custom-name').value = '';
+            document.getElementById('profile-url').value = '';
+            document.getElementById('profile-img').value = '';
+            document.getElementById('custom-platform-name').style.display = 'none';
 
-        function updatePlatformsList() {
-            const list = document.getElementById('platformsList');
-            list.innerHTML = '<label>Added Platforms:</label>';
-            
-            platforms.forEach((platform, index) => {
-                const div = document.createElement('div');
-                div.className = 'platform-item';
-                div.innerHTML = `
-                    <span>${platform.type}</span>
-                    <button onclick="removePlatform(${index})" class="remove-btn">Remove</button>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        function removePlatform(index) {
-            platforms.splice(index, 1);
-            updatePlatformsList();
+            updateProfilesList();
             saveChanges();
         }
 
-        function saveChanges() {
-            // Update title
-            const title = document.getElementById('titleInput').value;
-            document.getElementById('title').textContent = title;
-            document.title = title;
+        function updateProfilesList() {
+            const container = document.getElementById('added-profiles');
+            container.innerHTML = '<label>Added Profiles:</label>';
 
-            // Update preview area
-            const previewArea = document.getElementById('previewArea');
-            previewArea.innerHTML = '';
-            
-            // Add profile info
-            const name = document.getElementById('nameInput').value;
-            const picUrl = document.getElementById('profilePicInput').value;
-            
-            if (name || picUrl) {
-                const profileCard = document.createElement('div');
-                profileCard.className = 'social-card';
-                profileCard.innerHTML = `
-                    ${picUrl ? `<img src="${picUrl}" alt="Profile" style="width: 150px; height: 150px;">` : ''}
-                    ${name ? `<h2>${name}</h2>` : ''}
+            profiles.forEach((profile, index) => {
+                const item = document.createElement('div');
+                item.className = 'profile-item';
+                item.innerHTML = `
+                    <span>${profile.platform}</span>
+                    <button class="remove-btn" onclick="removeProfile(${index})">Remove</button>
                 `;
-                previewArea.appendChild(profileCard);
+                container.appendChild(item);
+            });
+        }
+
+        function removeProfile(index) {
+            profiles.splice(index, 1);
+            updateProfilesList();
+            saveChanges();
+        }
+
+        function createSocialCard(platform, url, imgUrl) {
+            return `
+                <div class="social-card">
+                    <img src="${imgUrl}" alt="${platform} Logo" onerror="this.src='https://via.placeholder.com/100'">
+                    <h2>${platform.charAt(0).toUpperCase() + platform.slice(1)}</h2>
+                    <a href="${url}" target="_blank">Visit Profile</a>
+                </div>
+            `;
+        }
+
+        function saveChanges() {
+            // Update profile section
+            const name = document.getElementById('name').value;
+            const profilePicUrl = document.getElementById('profile-pic-url').value;
+            const coffeeUrl = document.getElementById('coffee-url').value;
+            const paypalUrl = document.getElementById('paypal-url').value;
+
+            document.getElementById('profile-name').textContent = name;
+            if (profilePicUrl) {
+                document.getElementById('profile-picture').src = profilePicUrl;
             }
 
-            // Add platform cards
-            platforms.forEach(platform => {
-                const card = document.createElement('div');
-                card.className = 'social-card';
-                card.innerHTML = `
-                    <h3>${platform.type}</h3>
-                    <a href="${platform.url}" target="_blank" class="btn">Visit Profile</a>
-                `;
-                previewArea.appendChild(card);
+            const coffeeLink = document.getElementById('coffee-link');
+            const paypalLink = document.getElementById('paypal-link');
+            
+            if (coffeeUrl) {
+                coffeeLink.href = coffeeUrl;
+                coffeeLink.style.display = 'inline-block';
+            } else {
+                coffeeLink.style.display = 'none';
+            }
+
+            if (paypalUrl) {
+                paypalLink.href = paypalUrl;
+                paypalLink.style.display = 'inline-block';
+            } else {
+                paypalLink.style.display = 'none';
+            }
+
+            // Update title
+            const title = document.getElementById('title').value;
+            document.getElementById('page-title').textContent = title;
+            document.title = title;
+
+            // Update email
+            const email = document.getElementById('email').value;
+            const emailLink = document.querySelector('header p a');
+            emailLink.href = `mailto:${email}`;
+            emailLink.textContent = email;
+
+            // Update social cards
+            const container = document.getElementById('social-cards-container');
+            container.innerHTML = '';
+            profiles.forEach(profile => {
+                container.innerHTML += createSocialCard(profile.platform, profile.url, profile.img);
             });
         }
 
         function downloadHTML() {
-            // Create final HTML without edit panel
             const finalHTML = document.documentElement.cloneNode(true);
             const editPanel = finalHTML.querySelector('.edit-mode');
-            if (editPanel) editPanel.remove();
+            if(editPanel) editPanel.remove();
             
-            // Clean up the container margins
             const container = finalHTML.querySelector('.container');
             container.style.marginRight = '0';
             
@@ -260,9 +414,6 @@
             a.click();
             URL.revokeObjectURL(url);
         }
-
-        // Initial save
-        saveChanges();
     </script>
 </body>
 </html>
