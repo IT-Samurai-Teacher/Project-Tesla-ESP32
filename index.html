@@ -400,8 +400,14 @@
         function showPlatformInput() {
             const select = document.getElementById('platform-select');
             const platform = select.value;
+            const inputsContainer = document.getElementById('platform-inputs');
             
-            if (!platform) return;
+            // Clear existing inputs
+            inputsContainer.innerHTML = '';
+            
+            if (!platform) {
+                return;
+            }
             
             if (addedPlatforms.find(p => p.type === platform)) {
                 alert('This platform is already added!');
@@ -409,14 +415,22 @@
                 return;
             }
 
-            const inputsContainer = document.getElementById('platform-inputs');
+            // Create input fields
             const inputDiv = document.createElement('div');
             inputDiv.className = 'platform-input active';
             inputDiv.innerHTML = `
+                <label>Profile URL:</label>
                 <input type="url" 
                        id="${platform}-url" 
                        placeholder="${platforms[platform].placeholder}"
                        class="edit-field">
+                       
+                <label>Profile Image URL (optional):</label>
+                <input type="url" 
+                       id="${platform}-img" 
+                       placeholder="Image URL (optional)"
+                       class="edit-field">
+                       
                 <button class="save-btn" 
                         style="margin-top: 10px;" 
                         onclick="addPlatform('${platform}')">
@@ -424,15 +438,28 @@
                 </button>
             `;
             
-            inputsContainer.innerHTML = '';
             inputsContainer.appendChild(inputDiv);
+        }
         }
 
         function addPlatform(platform) {
             const url = document.getElementById(`${platform}-url`).value;
+            const platformSelect = document.getElementById('platform-select');
+            const selectedPlatform = platformSelect.value;
             
-            if (!url) {
-                alert('Please enter a valid URL');
+            if (!selectedPlatform) {
+                alert('Please select a platform from the dropdown');
+                return;
+            }
+            
+            if (!url || !url.startsWith('http')) {
+                alert('Please enter a valid URL starting with http:// or https://');
+                return;
+            }
+
+            // Check if platform already exists
+            if (addedPlatforms.some(p => p.type === platform)) {
+                alert('This platform is already added!');
                 return;
             }
 
@@ -441,11 +468,15 @@
                 url: url
             });
 
-            document.getElementById('platform-select').value = '';
+            // Clear inputs after successful addition
+            platformSelect.value = '';
+            document.getElementById(`${platform}-url`).value = '';
+            document.getElementById('profile-img').value = '';
             document.getElementById('platform-inputs').innerHTML = '';
             
             updatePlatformsList();
             updateSupportButtons();
+        }
         }
 
         function removePlatform(index) {
